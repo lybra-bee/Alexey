@@ -1,0 +1,32 @@
+name: Update AI News
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"  # каждые 3 часа
+  workflow_dispatch:       # можно запустить вручную
+
+jobs:
+  update-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Generate news
+        run: python scripts/generate_news.py
+
+      - name: Commit changes
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Actions Bot"
+          git add news.json
+          git commit -m "Auto-update news.json" || echo "No changes"
+          git push
