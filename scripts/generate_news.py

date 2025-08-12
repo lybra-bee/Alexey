@@ -1,37 +1,32 @@
-import requests
-import json
-import os
+import json, requests, os
 from datetime import datetime
 
-API_KEY = os.getenv("OPENAI_API_KEY", "hf_xxx")  # сюда подставит GitHub секрет
-API_URL = "https://api.openai.com/v1/chat/completions"
+HF_API_KEY = os.getenv("HF_API_KEY")
+API_URL = "https://api-inference.huggingface.co/models/gpt2"
+
+def query(prompt):
+    headers = {"Authorization": f"Bearer {HF_API_KEY}"}
+    payload = {"inputs": prompt, "max_length": 300}
+    response = requests.post(API_URL, headers=headers, json=payload)
+    try:
+        return response.json()[0]['generated_text']
+    except:
+        return "Ошибка генерации"
 
 def generate_news():
-    prompt = """
-    Сгенерируй 5 свежих новостей об ИИ, технологиях и науке.
-    Формат JSON: [{"title": "...", "content": "...", "imageUrl": "..."}]
-    Картинки бери с https://picsum.photos/800/400?random=...
-    """
-    headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
-    data = {
-        "model": "gpt-4o-mini",
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0.8
-    }
-
-    r = requests.post(API_URL, headers=headers, json=data)
-    r.raise_for_status()
-
-    text = r.json()["choices"][0]["message"]["content"]
-    try:
-        news = json.loads(text)
-    except:
-        news = [{"title": "Ошибка генерации", "content": text, "imageUrl": ""}]
-
-    return news
+    articles = []
+    for i in range(5):
+        title = query("Сгенерируй короткий заголовок новости про ИИ на русском")
+        content = query(f"Напиши новостную статью по заголовку: {title}")
+        image_url = f"https://placehold.co/600x400?text=News+{i+1}"  # потом заменим на генератор картинок
+        articles.append({
+            "title": title.strip(),
+            "content": content.strip(),
+            "imageUrl": image_url,
+            "date": datetime.now().isoformat()
+        })
+    with open("news.json", "w", encoding="utf-8") as f:
+        json.dump(articles, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
-    news = generate_news()
-    with open("news.json", "w", encoding="utf-8") as f:
-        json.dump(news, f, ensure_ascii=False, indent=2)
-    print(f"[{datetime.now()}] Обновлено {len(news)} новостей")
+    generate_news()
