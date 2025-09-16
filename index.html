@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой блог-портфолио</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #10b981;
+            --text-color: #1f2937;
+            --bg-color: #f9fafb;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        .dark-theme {
+            --primary-color: #818cf8;
+            --secondary-color: #34d399;
+            --text-color: #f3f4f6;
+            --bg-color: #111827;
+            --card-bg: #1f2937;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header & Navigation */
+        header {
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 20px;
+            transition: var(--transition);
+        }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: white;
+            color: var(--primary-color);
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+            animation: fadeInUp 1.4s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Content */
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Latest Article */
+        .latest-article {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 60px;
+            transition: var(--transition);
+        }
+
+        .latest-article:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .article-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .article-content {
+            padding: 30px;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        /* Articles Carousel */
+        .articles-carousel {
+            margin: 60px 0;
+            position: relative;
+        }
+
+        .carousel-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            gap: 20px;
+            padding: 20px 0;
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .carousel-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Edge */
+        }
+
+        .article-card {
+            flex: 0 0 auto;
+            width: 300px;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .article-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .article-card-content {
+            padding: 20px;
+        }
+
+        .carousel-nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .carousel-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .carousel-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Gallery */
+        .gallery {
+            margin: 60px 0;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 250px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+            padding: 20px;
+            color: white;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-item-overlay {
+            opacity: 1;
+        }
+
+        /* About */
+        .about {
+            margin: 60px 0;
+        }
+
+        .about-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .profile-img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 5px solid var(--primary-color);
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .skill {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--card-bg);
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 60px;
+            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .social-links a {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Page Styles */
+        .page {
+            display: none;
+            padding: 40px 0;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: var(--card-bg);
+                padding: 20px;
+                box-shadow: var(--shadow);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                margin: 10px 0;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo" data-page="home"><i class="fas fa-brain"></i> БлогПортфолио</a>
+                <ul class="nav-links">
+                    <li><a href="#" data-page="home">Главная</a></li>
+                    <li><a href="#" data-page="articles">Статьи</a></li>
+                    <li><a href="#" data-page="gallery">Галерея</a></li>
+                    <li><a href="#" data-page="about">Обо мне</a></li>
+                    <button class="theme-toggle"><i class="fas fa-moon"></i></button>
+                </ul>
+                <button class="hamburger"><i class="fas fa-bars"></i></button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <section class="hero">
+                <div class="container">
+                    <h1>Добро пожаловать в мой блог-портфолио</h1>
+                    <p>Здесь я делюсь своими мыслями, работами и творческими проектами. Исследуйте мой мир через статьи и галерею!</p>
+                    <a href="#" class="btn" data-page="articles">Читать статьи</a>
+                </div>
+            </section>
+
+            <div class="container">
+                <section class="latest-article">
+                    <img src="https://picsum.photos/1200/600?random=1" alt="Latest Article" class="article-image">
+                    <div class="article-content">
+                        <h2>Последняя статья: Будущее веб-разработки в 2023 году</h2>
+                        <div class="article-meta">
+                            <span><i class="far fa-calendar"></i> 15 октября, 2023</span>
+                            <span><i class="far fa-clock"></i> 5 мин чтения</span>
+                        </div>
+                        <p>В этой статье мы рассмотрим тренды веб-разработки, которые будут определять индустрию в ближайшие годы. От искусственного интеллекта до Web3 - будущее уже здесь.</p>
+                        <p>Технологии развиваются с невероятной скоростью, и веб-разработка не является исключением. С появлением новых框架 и инструментов, разработчики могут создавать более сложные и интерактивные приложения...</p>
+                        <a href="#" class="btn" style="margin-top: 20px;">Читать далее</a>
+                    </div>
+                </section>
+
+                <section class="articles-carousel">
+                    <h2 class="section-title">Недавние статьи</h2>
+                    <div class="carousel-container">
+                        <div class="article-card">
+                            <img src="https://picsum.photos/300/200?random=2" alt="Article">
+                            <div class="article-card-content">
+                                <h3>Искусственный интеллект в дизайне</h3>
+                                <p>Как AI меняет подход к созданию пользовательских интерфейсов.</p>
+                            </div>
+                        </div>
+                        <div class="article-card">
+                            <img src="https://picsum.photos/300/200?random=3" alt="Article">
+                            <div class="article-card-content">
+                                <h3>Основы Web3 разработки</h3>
+                                <p>Введение в децентрализованные приложения и блокчейн технологии.</p>
+                            </div>
+                        </div>
+                        <div class="article-card">
+                            <img src="https://picsum.photos/300/200?random=4" alt="Article">
+                            <div class="article-card-content">
+                                <h3>Адаптивный дизайн в 2023</h3>
+                                <p>Современные подходы к созданию responsive интерфейсов.</p>
+                            </div>
+                        </div>
+                        <div class="article-card">
+                            <img src="https://picsum.photos/300/200?random=5" alt="Article">
+                            <div class="article-card-content">
+                                <h3>Оптимизация производительности</h3>
+                                <p>Как ускорить загрузку вашего сайта и улучшить пользовательский опыт.</p>
+                            </div>
+                        </div>
+                        <div class="article-card">
+                            <img src="https://picsum.photos/300/200?random=6" alt="Article">
+                            <div class="article-card-content">
+                                <h3>Типографика в веб-дизайне</h3>
+                                <p>Выбор шрифтов и их влияние на восприятие контента.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-nav">
+                        <button class="carousel-btn" id="carousel-prev"><i class="fas fa-arrow-left"></i></button>
+                        <button class="carousel-btn" id="carousel-next"><i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Articles Page -->
+        <div id="articles" class="page">
+            <div class="container">
+                <h2 class="section-title">Все статьи</h2>
+                <div class="articles-grid">
+                    <div class="article-card">
+                        <img src="https://picsum.photos/300/200?random=7" alt="Article">
+                        <div class="article-card-content">
+                            <h3>Введение в Machine Learning</h3>
+                            <div class="article-meta">
+                                <span><i class="far fa-calendar"></i> 10 октября, 2023</span>
+                                <span><i class="far fa-clock"></i> 7 мин чтения</span>
+                            </div>
+                            <p>Основные концепции машинного обучения для начинающих разработчиков.</p>
+                        </div>
+                    </div>
+                    <div class="article-card">
+                        <img src="https://picsum.photos/300/200?random=8" alt="Article">
+                        <div class="article-card-content">
+                            <h3>CSS Grid против Flexbox</h3>
+                            <div class="article-meta">
+                                <span><i class="far fa-calendar"></i> 8 октября, 2023</span>
+                                <span><i class="far fa-clock"></i> 5 мин чтения</span>
+                            </div>
+                            <p>Когда использовать Grid, а когда Flexbox для вашего макета.</p>
+                        </div>
+                    </div>
+                    <div class="article-card">
+                        <img src="https://picsum.photos/300/200?random=9" alt="Article">
+                        <div class="article-card-content">
+                            <h3>JavaScript ES2023</h3>
+                            <div class="article-meta">
+                                <span><i class="far fa-calendar"></i> 5 октября, 2023</span>
+                                <span><i class="far fa-clock"></i> 6 мин чтения</span>
+                            </div>
+                            <p>Новые функции JavaScript, которые появятся в следующем релизе.</p>
+                        </div>
+                    </div>
+                    <div class="article-card">
+                        <img src="https://picsum.photos/300/200?random=10" alt="Article">
+                        <div class="article-card-content">
+                            <h3>Дизайн систем</h3>
+                            <div class="article-meta">
+                                <span><i class="far fa-calendar"></i> 3 октября, 2023</span>
+                                <span><i class="far fa-clock"></i> 8 мин чтения</span>
+                            </div>
+                            <p>Создание масштабируемых дизайн-систем для больших проектов.</p>
+                        </div>
+                    </div>
+                    <div class="article-card">
+                        <img src="https://picsum.photos/300/200?random=11" alt="Article">
+                        <div class="article-card-content">
+                            <h3>Анимации в вебе</h3>
+                            <div class="article-meta">
+                                <span><i class="far fa-calendar"></i> 1 октября, 2023</span>
+                                <span><i class="far fa-clock"></i> 4 мин чтения</span>
+                            </div>
+                            <p>Современные подходы к созданию плавных анимаций на сайте.</p>
+                        </div>
+                    </div>
+                    <div class="article-card">
+                        <img src="https://picsum.photos/300/200?random=12" alt="Article">
+                        <div class="article-card-content">
+                            <h3>Доступность в веб-дизайне</h3>
+                            <div class="article-meta">
+                                <span><i class="far fa-calendar"></i> 28 сентября, 2023</span>
+                                <span><i class="far fa-clock"></i> 9 мин чтения</span>
+                            </div>
+                            <p>Как сделать ваш сайт доступным для всех пользователей.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gallery Page -->
+        <div id="gallery" class="page">
+            <div class="container">
+                <h2 class="section-title">Галерея изображений</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <img src="https://picsum.photos/300/300?random=13" alt="Gallery Image">
+                        <div class="gallery-item-overlay">
+                            <h3>Городские огни</h3>
+                            <p>Ночная фотография городского пейзажа</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://picsum.photos/300/300?random=14" alt="Gallery Image">
+                        <div class="gallery-item-overlay">
+                            <h3>Горный пейзаж</h3>
+                            <p>Величественные горы в утреннем тумане</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://picsum.photos/300/300?random=15" alt="Gallery Image">
+                        <div class="gallery-item-overlay">
+                            <h3>Морское побережье</h3>
+                            <p>Волны, разбивающиеся о скалы</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://picsum.photos/300/300?random=16" alt="Gallery Image">
+                        <div class="gallery-item-overlay">
+                            <h3>Архитектура</h3>
+                            <p>Современное здание с уникальным дизайном</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://picsum.photos/300/300?random=17" alt="Gallery Image">
+                        <div class="gallery-item-overlay">
+                            <h3>Макро фотография</h3>
+                            <p>Детали, которые обычно остаются незамеченными</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://picsum.photos/300/300?random=18" alt="Gallery Image">
+                        <div class="gallery-item-overlay">
+                            <h3>Портрет</h3>
+                            <p>Выразительный портрет в естественном свете</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://picsum.photos/300/300?random=19" alt="Gallery Image">
+                        <div class="gallery-item-overlay">
+                            <h3>Абстракция</h3>
+                            <p>Цвет и форма в гармонии</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://picsum.photos/300/300?random=20" alt="Gallery Image">
+                        <div class="gallery-item-overlay">
+                            <h3>Уличная фотография</h3>
+                            <p>Повседневная жизнь в городе</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Page -->
+        <div id="about" class="page">
+            <div class="container">
+                <h2 class="section-title">Обо мне</h2>
+                <div class="about-content">
+                    <img src="https://picsum.photos/200/200?random=21" alt="Profile" class="profile-img">
+                    <h3>Привет, я Алексей</h3>
+                    <p>Я веб-разработчик и дизайнер с passion к созданию красивых и функциональных digital-продуктов. Специализируюсь на frontend разработке, UX/UI дизайне и веб-анимациях.</p>
+                    <p>Мой опыт включает работу с различными технологиями, включая HTML5, CSS3, JavaScript, React, Vue.js и многое другое. Я постоянно учусь и исследую новые подходы в веб-разработке.</p>
+                    <p>Этот блог-портфолио - место, где я делюсь своими знаниями, мыслями и творческими проектами. Надеюсь, вы найдете здесь что-то интересное для себя!</p>
+                    
+                    <h3 style="margin-top: 30px;">Мои навыки</h3>
+                    <div class="skills">
+                        <span class="skill">HTML5</span>
+                        <span class="skill">CSS3</span>
+                        <span class="skill">JavaScript</span>
+                        <span class="skill">React</span>
+                        <span class="skill">Vue.js</span>
+                        <span class="skill">UI/UX Design</span>
+                        <span class="skill">Responsive Design</span>
+                        <span class="skill">Web Animation</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <h3>Блог-портфолио</h3>
+            <p>Сайт создан с использованием современных веб-технологий</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+            <p>© 2023 Все права защищены</p>
+        </div>
+    </footer>
+
+    <script>
+        // Навигация между страницами
+        document.querySelectorAll('[data-page]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = link.getAttribute('data-page');
+                
+                // Скрыть все страницы
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // Показать выбранную страницу
+                document.getElementById(pageId).classList.add('active');
+                
+                // Прокрутка к верху страницы
+                window.scrollTo(0, 0);
+            });
+        });
+
+        // Переключение темы
+        const themeToggle = document.querySelector('.theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-theme')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+
+        // Карусель статей
+        const carousel = document.querySelector('.carousel-container');
+        const prevBtn = document.getElementById('carousel-prev');
+        const nextBtn = document.getElementById('carousel-next');
+
+        nextBtn.addEventListener('click', () => {
+            carousel.scrollBy({ left: 320, behavior: 'smooth' });
+        });
+
+        prevBtn.addEventListener('click', () => {
+            carousel.scrollBy({ left: -320, behavior: 'smooth' });
+        });
+
+        // Мобильное меню
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Закрытие мобильного меню при клике на ссылку
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Анимация элементов при прокрутке
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.article-card, .gallery-item');
+            
+            elements.forEach(element => {
+                const position = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+                
+                if (position < screenPosition) {
+                    element.style.opacity = 1;
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        };
+
+        // Установка начальных стилей для анимации
+        document.querySelectorAll('.article-card, .gallery-item').forEach(element => {
+            element.style.opacity = 0;
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        });
+
+        // Запуск анимации при загрузке и прокрутке
+        window.addEventListener('load', animateOnScroll);
+        window.addEventListener('scroll', animateOnScroll);
+    </script>
+</body>
+</html>
