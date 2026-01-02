@@ -3,1533 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Блог-портфолио с автоматической генерацией</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <title>🎉 AI Поздравительная Открытка</title>
     <style>
-        :root {
-            --primary-color: #6366f1;
-            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            --secondary-color: #10b981;
-            --text-color: #1f2937;
-            --bg-color: #f9fafb;
-            --card-bg: #ffffff;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
-            --transition: all 0.3s ease;
-            --border-radius: 16px;
-        }
-
-        .dark-theme {
-            --primary-color: #818cf8;
-            --primary-gradient: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
-            --secondary-color: #34d399;
-            --text-color: #f3f4f6;
-            --bg-color: #111827;
-            --card-bg: #1f2937;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-            --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            transition: var(--transition);
-            overflow-x: hidden;
-        }
-
-        h1, h2, h3, h4 {
-            font-family: 'Playfair Display', serif;
-            margin-bottom: 1rem;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header & Navigation */
-        header {
-            background-color: var(--card-bg);
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            transition: var(--transition);
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            transition: var(--transition);
-        }
-
-        .logo:hover {
-            transform: scale(1.05);
-        }
-
-        .logo i {
-            margin-right: 10px;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-
-        .nav-links li {
-            margin-left: 30px;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-color);
-            font-weight: 500;
-            transition: var(--transition);
-            position: relative;
-            padding: 8px 0;
-        }
-
-        .nav-links a:after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 3px;
-            bottom: 0;
-            left: 0;
-            background: var(--primary-gradient);
-            transition: var(--transition);
-            border-radius: 3px;
-        }
-
-        .nav-links a:hover:after {
-            width: 100%;
-        }
-
-        .theme-toggle {
-            background: var(--primary-gradient);
-            border: none;
-            color: white;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-left: 20px;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .theme-toggle:hover {
-            transform: rotate(15deg);
-        }
-
-        .hamburger {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* Hero Section */
-        .hero {
-            padding: 100px 0;
-            text-align: center;
-            background: var(--primary-gradient);
-            color: white;
-            margin-bottom: 60px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,128L48,117.3C96,107,192,85,288,112C384,139,480,213,576,218.7C672,224,768,160,864,138.7C960,117,1056,139,1152,149.3C1248,160,1344,160,1392,160L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'%3E%3C/path%3E%3C/svg%3E");
-            background-size: cover;
-            background-position: center;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            animation: fadeInUp 1s ease;
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            max-width: 700px;
-            margin: 0 auto 40px;
-            animation: fadeInUp 1.2s ease;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 14px 35px;
-            background: white;
-            color: var(--primary-color);
-            border: none;
-            border-radius: 50px;
-            font-weight: 700;
-            text-decoration: none;
-            cursor: pointer;
-            transition: var(--transition);
-            animation: fadeInUp 1.4s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-gradient {
-            background: var(--primary-gradient);
-            color: white;
-        }
-
-        /* Main Content */
-        .section-title {
-            text-align: center;
-            margin-bottom: 50px;
-            position: relative;
-        }
-
-        .section-title:after {
-            content: '';
-            position: absolute;
-            width: 80px;
-            height: 4px;
-            background: var(--primary-gradient);
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 2px;
-        }
-
-        /* Latest Article */
-        .latest-article {
-            background-color: var(--card-bg);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            margin-bottom: 80px;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .latest-article:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .article-image {
-            width: 100%;
-            height: 450px;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .latest-article:hover .article-image {
-            transform: scale(1.03);
-        }
-
-        .article-content {
-            padding: 40px;
-        }
-
-        .article-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            color: #6b7280;
-            font-size: 0.9rem;
-        }
-
-        .article-meta i {
-            margin-right: 8px;
-        }
-
-        .tag {
-            display: inline-block;
-            padding: 5px 15px;
-            background: var(--primary-gradient);
-            color: white;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            margin-right: 10px;
-        }
-
-        /* Articles Carousel */
-        .articles-carousel {
-            margin: 80px 0;
-            position: relative;
-        }
-
-        .carousel-container {
-            display: flex;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-            gap: 30px;
-            padding: 30px 10px;
-            scrollbar-width: none; /* Firefox */
-        }
-
-        .carousel-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Edge */
-        }
-
-        .article-card {
-            flex: 0 0 auto;
-            width: 320px;
-            background-color: var(--card-bg);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .article-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .article-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .article-card:hover img {
-            transform: scale(1.1);
-        }
-
-        .article-card-content {
-            padding: 25px;
-        }
-
-        .carousel-nav {
-            display: flex;
-            justify-content: center;
-            margin-top: 30px;
-            gap: 15px;
-        }
-
-        .carousel-btn {
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow);
-        }
-
-        .carousel-btn:hover {
-            transform: scale(1.1);
-        }
-
-        /* Gallery */
-        .gallery {
-            margin: 80px 0;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        .gallery-item {
-            position: relative;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            height: 280px;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: var(--shadow);
-        }
-
-        .gallery-item:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
-
-        .gallery-item-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-            padding: 20px;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .gallery-item:hover .gallery-item-overlay {
-            opacity: 1;
-        }
-
-        /* About */
-        .about {
-            margin: 80px 0;
-        }
-
-        .about-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .profile-img-container {
-            position: relative;
-            margin-bottom: 30px;
-        }
-
-        .profile-img {
-            width: 220px;
-            height: 220px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid var(--primary-color);
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .profile-img-container:hover .profile-img {
-            transform: scale(1.05);
-            border-color: transparent;
-            border-image: var(--primary-gradient);
-            border-image-slice: 1;
-        }
-
-        .profile-img-container::after {
-            content: '';
-            position: absolute;
-            width: 240px;
-            height: 240px;
-            border-radius: 50%;
-            border: 2px solid var(--primary-color);
-            top: -15px;
-            left: -15px;
-            z-index: -1;
-            animation: pulse 2s infinite;
-        }
-
-        .skills {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .skill {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            transition: var(--transition);
-        }
-
-        .skill:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow);
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--card-bg);
-            padding: 60px 0 30px;
-            text-align: center;
-            margin-top: 80px;
-            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .footer-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin: 30px 0;
-        }
-
-        .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            background: var(--primary-gradient);
-            color: white;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            transition: var(--transition);
-        }
-
-        .social-links a:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow);
-        }
-
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background: var(--primary-gradient);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            opacity: 0;
-            visibility: hidden;
-            z-index: 999;
-        }
-
-        .back-to-top.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .back-to-top:hover {
-            transform: translateY(-5px);
-        }
-
-        /* Page Styles */
-        .page {
-            display: none;
-            padding: 40px 0;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(0.95);
-                opacity: 0.7;
-            }
-            50% {
-                transform: scale(1);
-                opacity: 0.3;
-            }
-            100% {
-                transform: scale(0.95);
-                opacity: 0.7;
-            }
-        }
-
-        /* Particles background */
-        .particles-container {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-        }
-
-        /* Admin Panel */
-        .admin-panel {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
-            z-index: 999;
-        }
-
-        .admin-toggle {
-            width: 60px;
-            height: 60px;
-            background: var(--primary-gradient);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .admin-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .admin-content {
-            position: absolute;
-            bottom: 70px;
-            left: 0;
-            width: 300px;
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            box-shadow: var(--shadow);
-            display: none;
-        }
-
-        .admin-content.active {
-            display: block;
-        }
-
-        .admin-content h3 {
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .admin-btn {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .admin-btn:hover {
-            transform: translateY(-3px);
-        }
-
-        .status-indicator {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        .status-success {
-            background-color: #10b98120;
-            color: #10b981;
-            border: 1px solid #10b98140;
-        }
-
-        .status-error {
-            background-color: #ef444420;
-            color: #ef4444;
-            border: 1px solid #ef444440;
-        }
-
-        .status-info {
-            background-color: #3b82f620;
-            color: #3b82f6;
-            border: 1px solid #3b82f640;
-        }
-
-        /* Loading animation */
-        .loader {
-            display: inline-block;
-            width: 80px;
-            height: 80px;
-            margin: 20px auto;
-        }
-        .loader:after {
-            content: " ";
-            display: block;
-            width: 64px;
-            height: 64px;
-            margin: 8px;
-            border-radius: 50%;
-            border: 6px solid var(--primary-color);
-            border-color: var(--primary-color) transparent var(--primary-color) transparent;
-            animation: loader 1.2s linear infinite;
-        }
-        @keyframes loader {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Timer display */
-        .timer-display {
-            position: fixed;
-            bottom: 30px;
-            right: 100px;
-            background: var(--card-bg);
-            padding: 10px 15px;
-            border-radius: 30px;
-            box-shadow: var(--shadow);
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            z-index: 998;
-        }
-
-        .timer-display i {
-            margin-right: 8px;
-            color: var(--primary-color);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .hero h1 {
-                font-size: 2.8rem;
-            }
-            
-            .article-image {
-                height: 350px;
-            }
-
-            .timer-display {
-                bottom: 100px;
-                right: 30px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background-color: var(--card-bg);
-                padding: 20px;
-                box-shadow: var(--shadow);
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .nav-links li {
-                margin: 15px 0;
-            }
-
-            .hamburger {
-                display: block;
-            }
-
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-
-            .hero p {
-                font-size: 1.1rem;
-            }
-            
-            .article-image {
-                height: 300px;
-            }
-            
-            .article-content {
-                padding: 25px;
-            }
-
-            .timer-display {
-                bottom: 100px;
-                right: 20px;
-                left: 20px;
-                text-align: center;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .hero {
-                padding: 80px 0;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .article-image {
-                height: 250px;
-            }
-            
-            .profile-img {
-                width: 180px;
-                height: 180px;
-            }
-            
-            .profile-img-container::after {
-                width: 200px;
-                height: 200px;
-                top: -12px;
-                left: -12px;
-            }
-
-            .admin-content {
-                width: 250px;
-            }
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .app { background: white; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); max-width: 600px; width: 100%; overflow: hidden; }
+        .step { padding: 40px; display: none; text-align: center; }
+        .step.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        h1 { color: #333; margin-bottom: 30px; font-size: 28px; }
+        input, textarea { width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 12px; font-size: 16px; margin-bottom: 20px; transition: border-color 0.3s; }
+        input:focus, textarea:focus { outline: none; border-color: #667eea; }
+        button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 30px; border-radius: 12px; font-size: 16px; cursor: pointer; transition: transform 0.2s; margin: 10px; }
+        button:hover:not(:disabled) { transform: translateY(-2px); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .preview { max-width: 100%; max-height: 400px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin: 20px 0; }
+        .text-preview { background: #f8f9fa; padding: 20px; border-radius: 12px; font-size: 18px; line-height: 1.6; text-align: left; min-height: 100px; white-space: pre-wrap; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .progress { margin: 20px 0; font-size: 14px; color: #666; }
+        .back-btn { background: #6c757d; }
+        .download-btn { background: #28a745; font-size: 18px; padding: 20px 40px; }
+        footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
+        .ai-badge { background: #10b981; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; margin-left: 10px; }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <nav>
-                <a href="#" class="logo" data-page="home"><i class="fas fa-brain"></i> БлогПортфолио</a>
-                <ul class="nav-links">
-                    <li><a href="#" data-page="home">Главная</a></li>
-                    <li><a href="#" data-page="articles">Статьи</a></li>
-                    <li><a href="#" data-page="gallery">Галерея</a></li>
-                    <li><a href="#" data-page="about">Обо мне</a></li>
-                    <button class="theme-toggle"><i class="fas fa-moon"></i></button>
-                </ul>
-                <button class="hamburger"><i class="fas fa-bars"></i></button>
-            </nav>
-        </div>
-    </header>
-
-    <main>
-        <!-- Home Page -->
-        <div id="home" class="page active">
-            <section class="hero">
-                <div class="particles-container" id="particles"></div>
-                <div class="container hero-content">
-                    <h1>Добро пожаловать в мой блог-портфолио</h1>
-                    <p>Здесь я делюсь своими мыслями, работами и творческими проектами. Исследуйте мой мир через статьи и галерею!</p>
-                    <a href="#" class="btn btn-gradient" data-page="articles">Читать статьи</a>
-                </div>
-            </section>
-
-            <div class="container">
-                <section class="latest-article" id="latest-article">
-                    <!-- Latest article will be loaded here -->
-                    <div class="loader"></div>
-                </section>
-
-                <section class="articles-carousel">
-                    <h2 class="section-title">Недавние статьи</h2>
-                    <div class="carousel-container" id="articles-container">
-                        <!-- Articles will be loaded here -->
-                        <div class="loader"></div>
-                    </div>
-                    <div class="carousel-nav">
-                        <button class="carousel-btn" id="carousel-prev"><i class="fas fa-arrow-left"></i></button>
-                        <button class="carousel-btn" id="carousel-next"><i class="fas fa-arrow-right"></i></button>
-                    </div>
-                </section>
-            </div>
+    <div class="app">
+        <!-- Шаг 1: Имя и повод -->
+        <div class="step active" id="step1">
+            <h1>🎉 Создай поздравительную открытку</h1>
+            <p><small>Реальные нейросети: <span class="ai-badge">DeepSeek</span> + <span class="ai-badge">Stable Diffusion</span></small></p>
+            <input type="text" id="name" placeholder="Имя (Маша, Папа...)" required>
+            <input type="text" id="occasion" placeholder="Повод (Новый год, День рождения...)" required>
+            <button onclick="generateText()">🤖 Сгенерировать текст</button>
+            <div id="textSpinner" class="spinner" style="display:none;"></div>
+            <div id="generatedText" class="text-preview" style="display:none;"></div>
+            <button id="approveText" onclick="nextStep(2)" style="display:none;">✅ Одобрить текст</button>
         </div>
 
-        <!-- Articles Page -->
-        <div id="articles" class="page">
-            <div class="container">
-                <h2 class="section-title">Все статьи</h2>
-                <div class="articles-grid" id="all-articles-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px;">
-                    <!-- All articles will be loaded here -->
-                    <div class="loader"></div>
-                </div>
-            </div>
+        <!-- Шаг 2: Картинка -->
+        <div class="step" id="step2">
+            <h1>🖼️ Опиши картинку</h1>
+            <textarea id="imagePrompt" rows="3" placeholder="милый котёнок с шариками, зимний лес, романтические цветы..."></textarea>
+            <div class="progress" id="progress"></div>
+            <button onclick="generateImage()">🎨 Сгенерировать (Stable Diffusion)</button>
+            <div id="imageSpinner" class="spinner" style="display:none;"></div>
+            <img id="generatedImage" class="preview" style="display:none;" crossorigin="anonymous">
+            <button id="approveImage" onclick="renderCard()" style="display:none;">✨ Создать открытку</button>
+            <button class="back-btn" onclick="prevStep(1)">← Назад</button>
         </div>
 
-        <!-- Gallery Page -->
-        <div id="gallery" class="page">
-            <div class="container">
-                <h2 class="section-title">Галерея изображений</h2>
-                <div class="gallery-grid" id="gallery-container">
-                    <!-- Gallery images will be loaded here -->
-                    <div class="loader"></div>
-                </div>
-            </div>
+        <!-- Шаг 3: Готовая открытка -->
+        <div class="step" id="step3">
+            <h1>🎁 Твоя открытка готова!</h1>
+            <canvas id="finalCard" class="preview"></canvas>
+            <button class="download-btn" onclick="downloadCard()">📥 Скачать PNG</button>
+            <button onclick="resetApp()">🔄 Новая открытка</button>
         </div>
 
-        <!-- About Page -->
-        <div id="about" class="page">
-            <div class="container">
-                <h2 class="section-title">Обо мне</h2>
-                <div class="about-content">
-                    <div class="profile-img-container">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Profile" class="profile-img">
-                    </div>
-                    <h3>Привет, я Алексей</h3>
-                    <p>Я веб-разработчик и дизайнер с passion к созданию красивых и функциональных digital-продуктов. Специализируюсь на frontend разработке, UX/UI дизайне и веб-анимациях.</p>
-                    <p>Мой опыт включает работу с различными технологиями, включая HTML5, CSS3, JavaScript, React, Vue.js и многое другое. Я постоянно учусь и исследую новые подходы в веб-разработке.</p>
-                    <p>Этот блог-портфолио - место, где я делюсь своими знаниями, мыслями и творческими проектами. Надеюсь, вы найдете здесь что-то интересное для себя!</p>
-                    
-                    <h3 style="margin-top: 30px;">Мои навыки</h3>
-                    <div class="skills">
-                        <span class="skill">HTML5</span>
-                        <span class="skill">CSS3</span>
-                        <span class="skill">JavaScript</span>
-                        <span class="skill">React</span>
-                        <span class="skill">Vue.js</span>
-                        <span class="skill">UI/UX Design</span>
-                        <span class="skill">Responsive Design</span>
-                        <span class="skill">Web Animation</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <h3>Блог-портфолио</h3>
-                <p>Сайт создан с использованием современных веб-технологий</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-github"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                </div>
-                <p>© 2023 Все права защищены</p>
-            </div>
-        </div>
-    </footer>
-
-    <a href="#" class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></a>
-
-    <!-- Timer Display -->
-    <div class="timer-display" id="timerDisplay">
-        <i class="fas fa-sync-alt"></i>
-        <span id="timerText">Следующая генерация: 24:00:00</span>
-    </div>
-
-    <!-- Admin Panel -->
-    <div class="admin-panel">
-        <div class="admin-toggle" id="adminToggle">
-            <i class="fas fa-cog"></i>
-        </div>
-        <div class="admin-content" id="adminContent">
-            <h3>Панель управления</h3>
-            <button class="admin-btn" id="generateArticle">Сгенерировать статью</button>
-            <button class="admin-btn" id="clearArticles">Очистить статьи</button>
-            <button class="admin-btn" id="regenerateAll">Перегенерировать всё</button>
-            <div class="status-indicator status-info" id="statusIndicator">
-                Статус: Ожидание генерации
-            </div>
-        </div>
+        <footer>🚀 Реальные нейросети без ключей: MLvoca DeepSeek + AI Horde Stable Diffusion</footer>
     </div>
 
     <script>
-        // Массив для хранения статей
-        let articles = [];
-        let generationTimer = null;
+        let currentStep = 1;
+        let greetingText = '';
+        let generatedImageUrl = '';
+        let pollInterval;
 
-        // DOM элементы
-        const latestArticleContainer = document.getElementById('latest-article');
-        const articlesContainer = document.getElementById('articles-container');
-        const allArticlesContainer = document.getElementById('all-articles-container');
-        const galleryContainer = document.getElementById('gallery-container');
-        const adminToggle = document.getElementById('adminToggle');
-        const adminContent = document.getElementById('adminContent');
-        const generateArticleBtn = document.getElementById('generateArticle');
-        const clearArticlesBtn = document.getElementById('clearArticles');
-        const regenerateAllBtn = document.getElementById('regenerateAll');
-        const statusIndicator = document.getElementById('statusIndicator');
-        const timerDisplay = document.getElementById('timerDisplay');
-        const timerText = document.getElementById('timerText');
+        // ✅ РЕАЛЬНАЯ генерация текста: MLvoca DeepSeek API (бесплатно, без ключей)
+        async function generateText() {
+            const name = document.getElementById('name').value.trim();
+            const occasion = document.getElementById('occasion').value.trim();
+            if (!name || !occasion) return alert('Заполни все поля!');
 
-        // Промпты для генерации заголовков
-        const titlePrompts = [
-            "Придумай яркий заголовок для статьи о последних тенденциях в искусственном интеллекте и машинном обучении",
-            "Сгенерируй креативный заголовок для мастер-класса по созданию нейросетей для обработки естественного языка",
-            "Придумай吸引人的标题 для урока по разработке современных веб-приложений с использованием AI",
-            "Создай intriguing заголовок для статьи о будущем Web3 и децентрализованных технологий",
-            "Придумай catchy заголовок для материала о квантовых вычислениях и их влиянии на криптографию",
-            "Сгенерируй впечатляющий заголовок для обзора новых фреймворков для фронтенд-разработки в 2023 году",
-            "Придумай провокационный заголовок для статьи об этике искусственного интеллекта и ответственности разработчиков",
-            "Создай motivating заголовок для урока по созданию собственного чат-бота с использованием GPT-технологий",
-            "Придумай informative заголовок для материала о различиях между блокчейн и традиционными базами данных",
-            "Сгенерируй вдохновляющий заголовок для статьи о том, как нейросети помогают в борьбе с изменением климата"
-        ];
+            document.getElementById('textSpinner').style.display = 'block';
+            document.getElementById('generatedText').style.display = 'none';
+            document.getElementById('approveText').style.display = 'none';
 
-        // Функция для получения случайного промпта
-        function getRandomPrompt() {
-            return titlePrompts[Math.floor(Math.random() * titlePrompts.length)];
-        }
+            const prompt = `Напиши короткое, душевное поздравление для ${name} по поводу ${occasion}. 
+            3-4 предложения максимум. Эмоционально, позитивно, на русском языке. 
+            Без формальностей типа "Уважаемый".`;
 
-        // Имитация генерации заголовка с помощью AI
-        async function generateAITitle() {
-            // В реальном приложении здесь будет запрос к API OpenAI
-            // Для демонстрации мы используем заглушку
-            const mockTitles = [
-                "Нейросети в веб-дизайне: тренды 2023 года",
-                "Как GPT-4 изменит мир программирования",
-                "Web3: будущее интернета уже здесь",
-                "Машинное обучение для начинающих: с чего начать",
-                "Искусственный интеллект в медицине: революция в диагностике",
-                "Квантовые вычисления: на пороге новой эры",
-                "Безопасность в эпоху IoT: как защитить свои устройства",
-                "Дизайн голосовых интерфейсов: принципы и практика",
-                "DevOps и AI: автоматизация процессов разработки",
-                "Этика искусственного интеллекта: вызовы и решения"
-            ];
-            
-            // Имитация задержки сети
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            return mockTitles[Math.floor(Math.random() * mockTitles.length)];
-        }
-
-        // Имитация генерации статьи с помощью AI
-        async function generateAIArticle(title) {
-            // В реальном приложении здесь будет запрос к API OpenAI
-            // Для демонстрации мы используем заглушку
-            const mockArticles = {
-                "Нейросети в веб-дизайне: тренды 2023 года": `
-                    <p>В 2023 году нейросети кардинально меняют подход к веб-дизайну. Современные инструменты на основе AI позволяют автоматизировать рутинные задачи и предлагать уникальные дизайн-решения.</p>
-                    <p>Одним из ключевых трендов становится генеративный дизайн, где нейросети создают множественные вариации макетов, из которых дизайнер может выбрать наиболее подходящие. Это значительно ускоряет процесс работы и позволяет исследовать больше креативных возможностей.</p>
-                    <p>Еще одним важным направлением является персонализация пользовательского опыта. Нейросети анализируют поведение пользователей и адаптируют интерфейс под их preferences, повышая engagement и конверсию.</p>
-                `,
-                "Как GPT-4 изменит мир программирования": `
-                    <p>Появление GPT-4 ознаменовало новую эру в разработке программного обеспечения. Эта мощная языковая модель не только помогает в написании кода, но и участвует в проектировании архитектуры приложений.</p>
-                    <p>Разработчики теперь могут использовать GPT-4 для генерации boilerplate кода, написания тестов и даже поиска сложных багов. Это значительно сокращает время разработки и позволяет сосредоточиться на решении более complex задач.</p>
-                    <p>Кроме того, GPT-4 делает программирование более доступным. Новички могут использовать модель в качестве mentor, получаando объяснения сложных концепций и рекомендации по best practices.</p>
-                `,
-                "Web3: будущее интернета уже здесь": `
-                    <p>Web3 представляет собой новую парадигму интернета, основанную на децентрализации, блокчейне и токенизации. В отличие от Web2, где данные контролируются крупными корпорациями, Web3 возвращает власть пользователям.</p>
-                    <p>Одной из ключевых особенностей Web3 является использование смарт-контрактов, которые позволяют создавать trustless приложения без посредников. Это открывает возможности для новых бизнес-моделей и социальных взаимодействий.</p>
-                    <p>Децентрализованные автономные организации (ДАО) становятся новой формой коллективного принятия решений, где каждый token holder имеет право голоса пропорционально своей доле.</p>
-                `,
-                "Машинное обучение для начинающих: с чего начать": `
-                    <p>Машинное обучение может показаться сложной темой для новичков, но на самом деле существует множество ресурсов для старта. Первым шагом является изучение основ Python - языка программирования, наиболее популярного в ML.</p>
-                    <p>После освоения базового синтаксиса Python стоит познакомиться с основными библиотеками для data science: NumPy для работы с массивами, Pandas для анализа данных и Matplotlib для визуализации.</p>
-                    <p>Следующим этапом является изучение фундаментальных концепций машинного обучения: supervised vs unsupervised learning, классификация, регрессия и кластеризация. Практические проекты на Kaggle помогут закрепить理论知识 на практике.</p>
-                `,
-                "Искусственный интеллект в медицине: революция в диагностике": `
-                    <p>Искусственный интеллект совершает революцию в медицинской диагностике, предлагая tools для раннего выявления заболеваний с высокой точностью. Алгоритмы deep learning анализируют медицинские изображения лучше, чем опытные radiologists.</p>
-                    <p>Одним из наиболее promising направлений является анализ медицинских изображений (рентген, МРТ, КТ) для detection патологий. AI-системы могут обнаруживать признаки рака, neurological Disorders и cardiovascular заболеваний на ранних стадиях.</p>
-                    <p>Кроме того, AI используется для разработки personalized treatment планов, учитывающих genetic profile пациента и историю болезни. Это позволяет подбирать наиболее effective терапию с минимальными побочными эффектами.</p>
-                `
-            };
-            
-            // Имитация задержки сети
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            return mockArticles[title] || `
-                <p>Эта статья была сгенерирована искусственным интеллектом и посвящена теме "${title}".</p>
-                <p>Современные технологии искусственного интеллекта позволяют создавать качественный контент, который сложно отличить от написанного человеком.</p>
-                <p>В статье рассматриваются последние тенденции и инновации в области высоких технологий, а также их практическое применение в различных сферах жизни.</p>
-            `;
-        }
-
-        // Имитация генерации изображения с помощью AI
-        async function generateAIImage(title) {
-            // В реальном приложении здесь будет запрос к API для генерации изображений
-            // Для демонстрации мы используем заглушку с Unsplash
-            const width = 600;
-            const height = 400;
-            const randomId = Math.floor(Math.random() * 1000);
-            return `https://picsum.photos/${width}/${height}?random=${randomId}`;
-        }
-
-        // Генерация новой статьи
-        async function generateNewArticle() {
             try {
-                updateStatus('Генерация новой статьи...', 'info');
+                const response = await fetch('https://api.mlvoca.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: 'deepseek-r1:free',
+                        messages: [{ role: 'user', content: prompt }],
+                        max_tokens: 200,
+                        temperature: 0.8
+                    })
+                });
                 
-                // Показываем индикатор загрузки
-                const loadingIndicator = document.createElement('div');
-                loadingIndicator.className = 'loader';
-                if (articles.length === 0) {
-                    latestArticleContainer.innerHTML = '';
-                    latestArticleContainer.appendChild(loadingIndicator);
-                }
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 
-                // Генерируем заголовок
-                const title = await generateAITitle();
-                
-                // Генерируем содержание статьи
-                const content = await generateAIArticle(title);
-                
-                // Генерируем изображение
-                const imageUrl = await generateAIImage(title);
-                
-                // Создаем объект статьи
-                const article = {
-                    id: Date.now(),
-                    title,
-                    content,
-                    imageUrl,
-                    date: new Date().toLocaleDateString('ru-RU', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    }),
-                    readTime: Math.floor(Math.random() * 10) + 5 + ' мин чтения',
-                    tags: ['Технологии', 'Нейросети', 'AI']
-                };
-                
-                // Добавляем статью в массив
-                articles.unshift(article);
-                
-                // Сохраняем в localStorage
-                saveArticlesToStorage();
-                
-                // Обновляем отображение
-                displayArticles();
-                
-                updateStatus('Статья успешно сгенерирована!', 'success');
-                
-                // Перезапускаем таймер
-                resetGenerationTimer();
-                
-                return article;
+                const data = await response.json();
+                greetingText = data.choices[0].message.content.trim();
             } catch (error) {
-                console.error('Ошибка при генерации статьи:', error);
-                updateStatus('Ошибка при генерации статьи', 'error');
+                console.error('MLvoca error:', error);
+                // Fallback к другой модели если MLvoca недоступна
+                greetingText = await fallbackTextGen(name, occasion);
             }
+
+            document.getElementById('generatedText').textContent = greetingText;
+            document.getElementById('generatedText').style.display = 'block';
+            document.getElementById('approveText').style.display = 'inline-block';
+            document.getElementById('textSpinner').style.display = 'none';
         }
 
-        // Сохранение статей в localStorage
-        function saveArticlesToStorage() {
-            // Оставляем только 10 последних статей
-            if (articles.length > 10) {
-                articles = articles.slice(0, 10);
-            }
-            localStorage.setItem('blogArticles', JSON.stringify(articles));
-            localStorage.setItem('lastGeneration', Date.now());
-        }
-
-        // Загрузка статей из localStorage
-        function loadArticlesFromStorage() {
-            const savedArticles = localStorage.getItem('blogArticles');
-            if (savedArticles) {
-                articles = JSON.parse(savedArticles);
-            }
-        }
-
-        // Отображение статей
-        function displayArticles() {
-            // Отображаем последнюю статью
-            if (articles.length > 0) {
-                const latestArticle = articles[0];
-                latestArticleContainer.innerHTML = `
-                    <img src="${latestArticle.imageUrl}" alt="${latestArticle.title}" class="article-image">
-                    <div class="article-content">
-                        ${latestArticle.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                        <h2>${latestArticle.title}</h2>
-                        <div class="article-meta">
-                            <span><i class="far fa-calendar"></i> ${latestArticle.date}</span>
-                            <span><i class="far fa-clock"></i> ${latestArticle.readTime}</span>
-                        </div>
-                        ${latestArticle.content}
-                        <a href="#" class="btn" style="margin-top: 20px;">Читать далее</a>
-                    </div>
-                `;
-            } else {
-                latestArticleContainer.innerHTML = '<p>Пока нет статей. Сгенерируйте первую!</p>';
-            }
-            
-            // Отображаем статьи в карусели
-            articlesContainer.innerHTML = '';
-            articles.slice(0, 5).forEach(article => {
-                const articleElement = document.createElement('div');
-                articleElement.classList.add('article-card');
-                articleElement.innerHTML = `
-                    <img src="${article.imageUrl}" alt="${article.title}">
-                    <div class="article-card-content">
-                        <h3>${article.title}</h3>
-                        <p>${article.content.substring(0, 100)}...</p>
-                    </div>
-                `;
-                articlesContainer.appendChild(articleElement);
-            });
-            
-            // Отображаем все статьи на странице "Статьи"
-            allArticlesContainer.innerHTML = '';
-            articles.forEach(article => {
-                const articleElement = document.createElement('div');
-                articleElement.classList.add('article-card');
-                articleElement.innerHTML = `
-                    <img src="${article.imageUrl}" alt="${article.title}">
-                    <div class="article-card-content">
-                        <h3>${article.title}</h3>
-                        <div class="article-meta">
-                            <span><i class="far fa-calendar"></i> ${article.date}</span>
-                            <span><i class="far fa-clock"></i> ${article.readTime}</span>
-                        </div>
-                        <p>${article.content.substring(0, 150)}...</p>
-                    </div>
-                `;
-                allArticlesContainer.appendChild(articleElement);
-            });
-            
-            // Отображаем изображения в галерее
-            galleryContainer.innerHTML = '';
-            articles.forEach(article => {
-                const galleryItem = document.createElement('div');
-                galleryItem.classList.add('gallery-item');
-                galleryItem.innerHTML = `
-                    <img src="${article.imageUrl}" alt="${article.title}">
-                    <div class="gallery-item-overlay">
-                        <h3>${article.title}</h3>
-                        <p>Изображение для статьи</p>
-                    </div>
-                `;
-                galleryContainer.appendChild(galleryItem);
-            });
-        }
-
-        // Обновление статуса
-        function updateStatus(message, type) {
-            statusIndicator.textContent = `Статус: ${message}`;
-            statusIndicator.className = 'status-indicator';
-            
-            switch (type) {
-                case 'success':
-                    statusIndicator.classList.add('status-success');
-                    break;
-                case 'error':
-                    statusIndicator.classList.add('status-error');
-                    break;
-                case 'info':
-                    statusIndicator.classList.add('status-info');
-                    break;
-            }
-            
-            // Автоматически скрываем статус через 5 секунд
-            setTimeout(() => {
-                statusIndicator.textContent = 'Статус: Ожидание генерации';
-                statusIndicator.className = 'status-indicator status-info';
-            }, 5000);
-        }
-
-        // Таймер автоматической генерации
-        function startGenerationTimer() {
-            // Останавливаем предыдущий таймер, если он был
-            if (generationTimer) {
-                clearInterval(generationTimer);
-            }
-            
-            // Запускаем новый таймер
-            generationTimer = setInterval(() => {
-                // Проверяем, прошло ли 24 часа с последней генерации
-                const lastGeneration = localStorage.getItem('lastGeneration');
-                const now = Date.now();
-                
-                if (!lastGeneration || (now - lastGeneration) >= 24 * 60 * 60 * 1000) {
-                    generateNewArticle();
-                }
-                
-                // Обновляем отображение таймера
-                updateTimerDisplay();
-            }, 1000); // Проверяем каждую секунду
-            
-            // Первоначальное обновление таймера
-            updateTimerDisplay();
-        }
-
-        // Сброс таймера
-        function resetGenerationTimer() {
-            localStorage.setItem('lastGeneration', Date.now());
-            updateTimerDisplay();
-        }
-
-        // Обновление отображения таймера
-        function updateTimerDisplay() {
-            const lastGeneration = localStorage.getItem('lastGeneration');
-            if (!lastGeneration) {
-                timerText.textContent = 'Следующая генерация: 24:00:00';
-                return;
-            }
-            
-            const lastGenTime = parseInt(lastGeneration);
-            const nextGenTime = lastGenTime + 24 * 60 * 60 * 1000;
-            const now = Date.now();
-            const timeRemaining = nextGenTime - now;
-            
-            if (timeRemaining <= 0) {
-                timerText.textContent = 'Генерация ожидает запуска';
-            } else {
-                const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
-                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-                
-                timerText.textContent = `Следующая генерация: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            }
-        }
-
-        // Инициализация
-        function init() {
-            // Загрузка статей из хранилища
-            loadArticlesFromStorage();
-            
-            // Отображение статей
-            displayArticles();
-            
-            // Запуск таймера автоматической генерации
-            startGenerationTimer();
-            
-            // Инициализация панели администратора
-            adminToggle.addEventListener('click', () => {
-                adminContent.classList.toggle('active');
-            });
-            
-            // Обработчики для кнопок админ-панели
-            generateArticleBtn.addEventListener('click', async () => {
-                adminContent.classList.remove('active');
-                await generateNewArticle();
-            });
-            
-            clearArticlesBtn.addEventListener('click', () => {
-                adminContent.classList.remove('active');
-                if (confirm('Вы уверены, что хотите удалить все статьи?')) {
-                    articles = [];
-                    saveArticlesToStorage();
-                    displayArticles();
-                    updateStatus('Все статьи удалены', 'success');
-                }
-            });
-            
-            regenerateAllBtn.addEventListener('click', async () => {
-                adminContent.classList.remove('active');
-                if (confirm('Это удалит все существующие статьи и создаст новые. Продолжить?')) {
-                    articles = [];
-                    for (let i = 0; i < 5; i++) {
-                        await generateNewArticle();
-                    }
-                }
-            });
-            
-            // Остальной код для навигации, темы и т.д.
-            initNavigation();
-            initTheme();
-            initCarousel();
-            initBackToTop();
-            createParticles();
-        }
-
-        // Инициализация навигации
-        function initNavigation() {
-            document.querySelectorAll('[data-page]').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const pageId = link.getAttribute('data-page');
-                    
-                    // Скрыть все страницы
-                    document.querySelectorAll('.page').forEach(page => {
-                        page.classList.remove('active');
-                    });
-                    
-                    // Показать выбранную страницу
-                    document.getElementById(pageId).classList.add('active');
-                    
-                    // Прокрутка к верху страницы
-                    window.scrollTo(0, 0);
+        // Fallback: Hugging Face ruGPT
+        async function fallbackTextGen(name, occasion) {
+            const prompt = `${name}, ${occasion}. Поздравление: `;
+            try {
+                const response = await fetch('https://api-inference.huggingface.co/models/IlyaGusev/rugpt3_small_based_on_gpt2', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ inputs: prompt, parameters: { max_new_tokens: 80, temperature: 0.7 } })
                 });
-            });
+                const data = await response.json();
+                return data[0]?.generated_text.slice(prompt.length).trim() || `Поздравляю ${name} с ${occasion}! 🎉`;
+            } catch {
+                return `Дорогой ${name}! С ${occasion}! Желаю счастья и радости! ❤️`;
+            }
+        }
 
-            // Мобильное меню
-            const hamburger = document.querySelector('.hamburger');
-            const navLinks = document.querySelector('.nav-links');
+        // ✅ РЕАЛЬНАЯ генерация картинки: AI Horde Stable Diffusion
+        async function generateImage() {
+            const prompt = (document.getElementById('imagePrompt').value.trim() || 'праздничная открытка').replace(/без текста|no text/gi, '');
+            document.getElementById('imageSpinner').style.display = 'block';
+            document.getElementById('progress').textContent = 'Отправка в очередь Stable Diffusion...';
+            document.getElementById('approveImage').style.display = 'none';
 
-            hamburger.addEventListener('click', () => {
-                navLinks.classList.toggle('active');
-            });
-
-            // Закрытие мобильного меню при клике на ссылку
-            document.querySelectorAll('.nav-links a').forEach(link => {
-                link.addEventListener('click', () => {
-                    navLinks.classList.remove('active');
+            try {
+                const response = await fetch('https://aihorde.net/api/v2/generate/async', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt: `${prompt}, высокое качество, детализировано, празднично, без текста на изображении, 512x768`,
+                        params: {
+                            sampler_name: 'k_euler_a',
+                            width: 512,
+                            height: 768,
+                            steps: 28,
+                            cfg_scale: 7.5,
+                            seed: -1,
+                            k: 1
+                        },
+                        models: ['DreamShaper_v8', 'Deliberate_v2', 'Realistic_Vision_V5.1'],
+                        apikey: '0000000000' // Анонимный доступ
+                    })
                 });
-            });
-        }
 
-        // Инициализация темы
-        function initTheme() {
-            const themeToggle = document.querySelector('.theme-toggle');
-            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-            
-            // Проверяем предпочтения пользователя и сохраненную тему
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme.matches)) {
-                document.body.classList.add('dark-theme');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                const data = await response.json();
+                if (!data.id) throw new Error('Нет ID генерации');
+
+                pollImageStatus(data.id);
+            } catch (error) {
+                document.getElementById('imageSpinner').style.display = 'none';
+                document.getElementById('progress').textContent = 'Ошибка: ' + error.message;
             }
-            
-            themeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-theme');
-                const icon = themeToggle.querySelector('i');
-                if (document.body.classList.contains('dark-theme')) {
-                    icon.classList.remove('fa-moon');
-                    icon.classList.add('fa-sun');
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    icon.classList.remove('fa-sun');
-                    icon.classList.add('fa-moon');
-                    localStorage.setItem('theme', 'light');
+        }
+
+        // Поллинг AI Horde
+        async function pollImageStatus(jobId) {
+            pollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`https://aihorde.net/api/v2/generate/status/${jobId}`);
+                    const data = await response.json();
+                    
+                    const done = data.generations?.length || 0;
+                    const total = data.n || 1;
+                    document.getElementById('progress').textContent = 
+                        data.queue_position ? `⏳ ${data.queue_position} в очереди` : 
+                        `✅ Готово: ${done}/${total}`;
+
+                    if (done > 0) {
+                        clearInterval(pollInterval);
+                        generatedImageUrl = data.generations[0].img;
+                        document.getElementById('generatedImage').src = generatedImageUrl;
+                        document.getElementById('generatedImage').style.display = 'block';
+                        document.getElementById('approveImage').style.display = 'inline-block';
+                        document.getElementById('imageSpinner').style.display = 'none';
+                        document.getElementById('progress').textContent = 'Готово! ✨';
+                    }
+                } catch (e) {
+                    clearInterval(pollInterval);
+                    document.getElementById('imageSpinner').style.display = 'none';
                 }
-            });
+            }, 4000);
         }
 
-        // Инициализация карусели
-        function initCarousel() {
-            const carousel = document.querySelector('.carousel-container');
-            const prevBtn = document.getElementById('carousel-prev');
-            const nextBtn = document.getElementById('carousel-next');
+        // Рендер финальной открытки
+        function renderCard() {
+            nextStep(3);
+            const canvas = document.getElementById('finalCard');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 512;
+            canvas.height = 768;
 
-            nextBtn.addEventListener('click', () => {
-                carousel.scrollBy({ left: 350, behavior: 'smooth' });
-            });
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, 512, 768);
 
-            prevBtn.addEventListener('click', () => {
-                carousel.scrollBy({ left: -350, behavior: 'smooth' });
-            });
+                // Полупрозрачный фон для текста
+                const gradient = ctx.createLinearGradient(0, 550, 0, 750);
+                gradient.addColorStop(0, 'rgba(0,0,0,0.8)');
+                gradient.addColorStop(1, 'rgba(0,0,0,0.4)');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(40, 520, 432, 228);
+
+                // Красивый текст
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 36px "Segoe UI", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(greetingText, 256, 580, 440);
+
+                // Золотая рамка
+                ctx.strokeStyle = '#ffd700';
+                ctx.lineWidth = 12;
+                ctx.lineCap = 'round';
+                ctx.strokeRect(24, 24, 464, 720);
+            };
+            img.onerror = () => alert('Ошибка загрузки изображения');
+            img.src = generatedImageUrl;
         }
 
-        // Инициализация кнопки "Наверх"
-        function initBackToTop() {
-            const backToTopButton = document.getElementById('backToTop');
-            
-            window.addEventListener('scroll', () => {
-                if (window.pageYOffset > 300) {
-                    backToTopButton.classList.add('visible');
-                } else {
-                    backToTopButton.classList.remove('visible');
-                }
-            });
-            
-            backToTopButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
+        function downloadCard() {
+            const canvas = document.getElementById('finalCard');
+            const link = document.createElement('a');
+            link.download = `otkrytka_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
         }
 
-        // Создание частиц для фона
-        function createParticles() {
-            const container = document.getElementById('particles');
-            const particleCount = 30;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                const size = Math.random() * 5 + 2;
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100;
-                const delay = Math.random() * 5;
-                const duration = Math.random() * 10 + 5;
-                
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${posX}%`;
-                particle.style.top = `${posY}%`;
-                particle.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
-                
-                container.appendChild(particle);
+        function nextStep(step) {
+            document.querySelectorAll('.step').forEach((s, i) => s.classList.toggle('active', i + 1 === step));
+            currentStep = step;
+        }
+        function prevStep(step) { nextStep(step); }
+        function resetApp() { location.reload(); }
+
+        // Горячие клавиши
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                if (currentStep === 1) generateText();
+                if (currentStep === 2) generateImage();
             }
-            
-            // Добавляем стили для анимации частиц
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes float {
-                    0% {
-                        transform: translate(0, 0);
-                    }
-                    25% {
-                        transform: translate(${Math.random() * 30 - 15}px, ${Math.random() * 30 - 15}px);
-                    }
-                    50% {
-                        transform: translate(${Math.random() * 40 - 20}px, ${Math.random() * 40 - 20}px);
-                    }
-                    75% {
-                        transform: translate(${Math.random() * 30 - 15}px, ${Math.random() * 30 - 15}px);
-                    }
-                    100% {
-                        transform: translate(0, 0);
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
-        // Запускаем инициализацию после загрузки DOM
-        document.addEventListener('DOMContentLoaded', init);
+        });
     </script>
 </body>
 </html>
