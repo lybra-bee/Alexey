@@ -3,126 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Открытка с редактором</title>
+    <title>AI Открытка: Пошаговый конструктор</title>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Comfortaa:wght@700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Comfortaa', cursive; background: #1a1a2e; min-height: 100vh; padding: 15px; display: flex; align-items: center; justify-content: center; }
         .app { background: #fff; border-radius: 24px; padding: 25px; max-width: 500px; width: 100%; box-shadow: 0 15px 40px rgba(0,0,0,0.4); }
         .step { display: none; }
-        .step.active { display: block; }
-        h1 { font-size: 20px; text-align: center; margin-bottom: 15px; color: #333; }
+        .step.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        h1 { font-size: 22px; text-align: center; margin-bottom: 20px; color: #333; }
         input, textarea { width: 100%; padding: 14px; margin: 10px 0; border: 2px solid #eee; border-radius: 12px; font-size: 16px; font-family: inherit; }
-        button { width: 100%; padding: 15px; background: #3498db; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        button.secondary { background: #2ecc71; }
+        button { width: 100%; padding: 16px; background: #3498db; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button.success { background: #2ecc71; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
         .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; display: none; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        canvas { width: 100%; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: move; }
-        .controls { margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 12px; }
-        label { display: block; font-size: 14px; margin-bottom: 5px; color: #666; }
-        input[type=range] { width: 100%; cursor: pointer; margin: 10px 0; }
+        .preview-box { background: #f8f9fa; padding: 15px; border-radius: 12px; border-left: 5px solid #3498db; margin: 15px 0; white-space: pre-wrap; font-size: 15px; }
+        canvas { width: 100%; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); margin-top: 10px; }
+        .controls { margin-top: 15px; background: #f1f3f5; padding: 15px; border-radius: 12px; }
+        .controls label { display: block; font-size: 13px; color: #666; margin-bottom: 5px; }
+        input[type=range] { width: 100%; margin-bottom: 10px; }
+        img.bg-preview { width: 100%; border-radius: 12px; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
 
 <div class="app">
-    <!-- Шаг 1 -->
-    <div class="step active" id="s1">
-        <h1>🖊️ Текст поздравления</h1>
-        <input id="name" placeholder="Имя получателя">
-        <input id="occasion" placeholder="Повод">
+    <!-- ШАГ 1: ТЕКСТ -->
+    <div class="step active" id="step1">
+        <h1>🎉 Шаг 1: Поздравление</h1>
+        <input id="userName" placeholder="Кому (напр. Мама)">
+        <input id="userOccasion" placeholder="Повод (напр. День рождения)">
         <div id="loader1" class="spinner"></div>
-        <button onclick="generateText()">Создать текст</button>
-        <button id="next1" class="secondary" style="display:none" onclick="showStep(2)">Далее</button>
+        <div id="textPreview" class="preview-box" style="display:none"></div>
+        <button id="genTextBtn" onclick="generateText()">Сгенерировать текст</button>
+        <button id="approveTextBtn" class="success" style="display:none" onclick="goToStep(2)">Текст отличный, далее →</button>
     </div>
 
-    <!-- Шаг 2 -->
-    <div class="step" id="s2">
-        <h1>🎨 Выбор фона</h1>
-        <textarea id="imgPrompt" placeholder="Опишите фон (напр. зимний уютный вечер)"></textarea>
+    <!-- ШАГ 2: КАРТИНКА -->
+    <div class="step" id="step2">
+        <h1>🖼️ Шаг 2: Фон открытки</h1>
+        <textarea id="imgPrompt" placeholder="Опишите, что нарисовать на фоне (напр. нежные цветы, солнечный день)"></textarea>
         <div id="loader2" class="spinner"></div>
-        <button onclick="generateImage()">Создать фон</button>
-        <button id="next2" class="secondary" style="display:none" onclick="startEditor()">Редактировать текст</button>
+        <img id="bgPreview" class="bg-preview">
+        <button id="genImgBtn" onclick="generateImage()">Создать изображение</button>
+        <button id="approveImgBtn" class="success" style="display:none" onclick="goToStep(3)">Фон нравится, далее →</button>
+        <button onclick="goToStep(1)" style="background:#95a5a6">Назад к тексту</button>
     </div>
 
-    <!-- Шаг 3: Редактор -->
-    <div class="step" id="s3">
-        <h1>✨ Настройка текста</h1>
-        <canvas id="editorCanvas"></canvas>
+    <!-- ШАГ 3: ПОЗИЦИОНИРОВАНИЕ -->
+    <div class="step" id="step3">
+        <h1>✨ Шаг 3: Настройка текста</h1>
+        <canvas id="finalCanvas"></canvas>
         <div class="controls">
             <label>Положение текста (выше/ниже):</label>
-            <input type="range" id="textY" min="100" max="1100" value="300" oninput="redraw()">
+            <input type="range" id="posY" min="100" max="1100" value="600" oninput="drawFinal()">
             <label>Размер шрифта:</label>
-            <input type="range" id="fontSize" min="30" max="100" value="65" oninput="redraw()">
+            <input type="range" id="fontSize" min="30" max="90" value="60" oninput="drawFinal()">
         </div>
-        <button class="secondary" onclick="download()">📥 Скачать результат</button>
-        <button onclick="location.reload()" style="background:#95a5a6">Сначала</button>
+        <button class="success" onclick="downloadImage()">📥 Сохранить открытку</button>
+        <button onclick="location.reload()" style="background:#95a5a6">Создать новую</button>
     </div>
 </div>
 
 <script>
-    let finalText = "", finalImg = new Image();
-    finalImg.crossOrigin = "anonymous";
+    let globalText = "";
+    let globalImg = new Image();
+    globalImg.crossOrigin = "anonymous";
 
-    function showStep(n) {
+    function goToStep(n) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-        document.getElementById('s' + n).classList.add('active');
+        document.getElementById('step' + n).classList.add('active');
+        if (n === 3) drawFinal();
     }
 
+    // 1. Генерация текста
     async function generateText() {
-        const n = document.getElementById("name").value, o = document.getElementById("occasion").value;
-        if (!n || !o) return alert("Заполните поля!");
-        document.getElementById("loader1").style.display = "block";
-        try {
-            const r = await fetch(`https://text.pollinations.ai/${encodeURIComponent("Напиши короткое теплое поздравление для " + n + " с " + o + ". 1-2 предложения.")}`);
-            finalText = await r.text();
-            document.getElementById("next1").style.display = "block";
-            alert("Текст готов!");
-        } finally { document.getElementById("loader1").style.display = "none"; }
-    }
+        const name = document.getElementById("userName").value.trim();
+        const occasion = document.getElementById("userOccasion").value.trim();
+        if (!name || !occasion) return alert("Введите имя и повод!");
 
-    async function generateImage() {
-        const p = document.getElementById("imgPrompt").value || "beautiful celebration background";
-        document.getElementById("loader2").style.display = "block";
-        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p + ", artistic, no text")}?width=800&height=1200&nologo=true&seed=${Math.random()}`;
+        const loader = document.getElementById("loader1");
+        const preview = document.getElementById("textPreview");
+        const nextBtn = document.getElementById("approveTextBtn");
+
+        loader.style.display = "block";
+        preview.style.display = "none";
+        nextBtn.style.display = "none";
+
+        const prompt = `Напиши короткое, очень теплое поздравление для ${name} с ${occasion}. 1-2 предложения. На русском языке.`;
         
-        finalImg.onload = () => {
-            document.getElementById("loader2").style.display = "none";
-            document.getElementById("next2").style.display = "block";
-            alert("Фон готов!");
+        try {
+            const r = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+            globalText = await r.text();
+            preview.innerText = globalText;
+            preview.style.display = "block";
+            nextBtn.style.display = "block";
+        } catch (e) {
+            alert("Ошибка генерации текста.");
+        } finally {
+            loader.style.display = "none";
+        }
+    }
+
+    // 2. Генерация изображения
+    async function generateImage() {
+        const prompt = document.getElementById("imgPrompt").value.trim() || "beautiful celebration background";
+        const loader = document.getElementById("loader2");
+        const preview = document.getElementById("bgPreview");
+        const nextBtn = document.getElementById("approveImgBtn");
+
+        loader.style.display = "block";
+        preview.style.display = "none";
+        nextBtn.style.display = "none";
+
+        const seed = Math.floor(Math.random() * 1000000);
+        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ", artistic style, high resolution, no text")}?width=800&height=1200&seed=${seed}&nologo=true`;
+
+        globalImg.onload = () => {
+            preview.src = url;
+            preview.style.display = "block";
+            nextBtn.style.display = "block";
+            loader.style.display = "none";
         };
-        finalImg.src = url;
+        globalImg.src = url;
     }
 
-    function startEditor() {
-        showStep(3);
-        redraw();
-    }
-
-    function redraw() {
-        const canvas = document.getElementById("editorCanvas");
+    // 3. Финальная отрисовка и позиционирование
+    function drawFinal() {
+        const canvas = document.getElementById("finalCanvas");
         const ctx = canvas.getContext("2d");
-        const textY = parseInt(document.getElementById("textY").value);
+        const yPos = parseInt(document.getElementById("posY").value);
         const fSize = parseInt(document.getElementById("fontSize").value);
 
         canvas.width = 800;
         canvas.height = 1200;
 
         // Рисуем фон
-        ctx.drawImage(finalImg, 0, 0, 800, 1200);
+        ctx.drawImage(globalImg, 0, 0, 800, 1200);
 
-        // Настройка текста
+        // Текст
         ctx.fillStyle = "white";
         ctx.textAlign = "center";
         ctx.shadowColor = "rgba(0,0,0,0.8)";
         ctx.shadowBlur = 15;
         ctx.font = `bold ${fSize}px 'Caveat', cursive`;
 
-        const words = finalText.split(" ");
+        const words = globalText.split(" ");
         const maxWidth = 700;
         let line = "", lines = [];
 
-        // Умный перенос строк
+        // Перенос строк
         for (let n = 0; n < words.length; n++) {
             let testLine = line + words[n] + " ";
             if (ctx.measureText(testLine).width > maxWidth && n > 0) {
@@ -134,35 +166,35 @@
         }
         lines.push(line);
 
-        // Рисуем фон под текст (мягкое пятно для читаемости)
-        const textBlockHeight = lines.length * (fSize * 1.2);
-        const grad = ctx.createRadialGradient(400, textY, 100, 400, textY, 500);
-        grad.addColorStop(0, "rgba(0,0,0,0.4)");
+        // Подложка (градиентное пятно под текст)
+        const blockHeight = lines.length * (fSize * 1.2);
+        const grad = ctx.createRadialGradient(400, yPos, 50, 400, yPos, 450);
+        grad.addColorStop(0, "rgba(0,0,0,0.5)");
         grad.addColorStop(1, "rgba(0,0,0,0)");
         ctx.fillStyle = grad;
-        ctx.fillRect(50, textY - 100, 700, textBlockHeight + 150);
+        ctx.fillRect(50, yPos - 100, 700, blockHeight + 200);
 
-        // Рисуем сам текст
+        // Пишем текст
         ctx.fillStyle = "white";
-        let currentY = textY;
+        let currentY = yPos;
         lines.forEach(l => {
             ctx.fillText(l.trim(), 400, currentY);
             currentY += fSize * 1.2;
         });
 
-        // Рамка
+        // Декоративная рамка
         ctx.shadowBlur = 0;
         ctx.strokeStyle = "rgba(255,255,255,0.4)";
         ctx.lineWidth = 6;
         ctx.strokeRect(20, 20, 760, 1160);
     }
 
-    function download() {
-        const c = document.getElementById("editorCanvas");
-        const a = document.createElement('a');
-        a.download = 'ai-card.png';
-        a.href = c.toDataURL("image/png");
-        a.click();
+    function downloadImage() {
+        const canvas = document.getElementById("finalCanvas");
+        const link = document.createElement('a');
+        link.download = 'greeting-card.png';
+        link.href = canvas.toDataURL("image/png");
+        link.click();
     }
 </script>
 
