@@ -3,100 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎉 AI Открытка</title>
+    <title>🎉 AI Открытка 2026</title>
+    <!-- Подключаем шрифты с принудительной загрузкой -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Comfortaa:wght@700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Comfortaa', cursive; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; display: flex; align-items: center; justify-content: center; }
-        .app { background: #fff; border-radius: 24px; padding: 30px; max-width: 500px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        body { font-family: 'Comfortaa', cursive; background: #2c3e50; min-height: 100vh; padding: 20px; display: flex; align-items: center; justify-content: center; }
+        .app { background: #fff; border-radius: 24px; padding: 30px; max-width: 500px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .step { display: none; }
-        .step.active { display: block; animation: slideIn 0.4s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        h1 { font-size: 26px; margin-bottom: 20px; text-align: center; color: #333; }
-        input, textarea { width: 100%; padding: 15px; margin: 10px 0 20px; border: 2px solid #e1e5e9; border-radius: 15px; font-size: 16px; font-family: inherit; }
-        button { width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 15px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s; margin: 5px 0; }
-        button:disabled { opacity: 0.6; }
-        .result-preview { padding: 15px; background: #f8f9fa; border-radius: 12px; border-left: 5px solid #667eea; margin: 15px 0; white-space: pre-wrap; display: none; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; display: none; }
+        .step.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        h1 { font-size: 24px; text-align: center; margin-bottom: 20px; }
+        input, textarea { width: 100%; padding: 15px; margin: 10px 0 20px; border: 2px solid #eee; border-radius: 12px; font-size: 16px; font-family: inherit; }
+        button { width: 100%; padding: 16px; background: #3498db; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+        button:disabled { background: #ccc; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; display: none; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .preview-img { width: 100%; border-radius: 15px; margin: 15px 0; display: none; }
-        canvas { width: 100%; border-radius: 15px; display: none; }
-        .back-btn { background: #adb5bd; }
+        #imgPrev { width: 100%; border-radius: 12px; display: none; margin-bottom: 15px; }
+        #finalCard { width: 100%; border-radius: 12px; display: none; }
+        .text-preview { background: #f9f9f9; padding: 15px; border-radius: 12px; margin-bottom: 15px; display: none; font-size: 14px; }
     </style>
 </head>
 <body>
 
 <div class="app">
     <div class="step active" id="s1">
-        <h1>📝 Текст</h1>
-        <input id="name" placeholder="Кому">
+        <h1>🖊️ Поздравление</h1>
+        <input id="name" placeholder="Имя получателя">
         <input id="occasion" placeholder="Повод">
-        <div id="spin1" class="spinner"></div>
-        <div id="textRes" class="result-preview"></div>
-        <button onclick="genText()">Придумать текст</button>
-        <button id="next1" style="display:none; background:#28a745" onclick="toStep(2)">Далее</button>
+        <div id="loader1" class="spinner"></div>
+        <div id="textRes" class="text-preview"></div>
+        <button onclick="generateText()">Придумать текст</button>
+        <button id="next1" style="display:none; background:#2ecc71" onclick="showStep(2)">Далее</button>
     </div>
 
     <div class="step" id="s2">
-        <h1>🖼️ Картинка</h1>
-        <textarea id="imgPrompt" placeholder="Что нарисовать?"></textarea>
-        <div id="spin2" class="spinner"></div>
-        <img id="imgPrev" class="preview-img">
-        <button onclick="genImg()">Создать фон</button>
-        <button id="next2" style="display:none; background:#28a745" onclick="renderFinal()">Собрать открытку</button>
-        <button class="back-btn" onclick="toStep(1)">Назад</button>
+        <h1>🎨 Картинка</h1>
+        <textarea id="imgPrompt" placeholder="Что нарисовать? (на английском или русском)"></textarea>
+        <div id="loader2" class="spinner"></div>
+        <img id="imgPrev">
+        <button onclick="generateImage()">Создать фон</button>
+        <button id="next2" style="display:none; background:#2ecc71" onclick="renderFinal()">Собрать открытку</button>
+        <button onclick="showStep(1)" style="background:#95a5a6">Назад</button>
     </div>
 
     <div class="step" id="s3">
         <h1>🎁 Готово!</h1>
-        <div id="spin3" class="spinner"></div>
+        <div id="loader3" class="spinner"></div>
         <canvas id="finalCard"></canvas>
-        <button onclick="download()">📥 Скачать</button>
-        <button class="back-btn" onclick="location.reload()">🔄 Сначала</button>
+        <button onclick="download()">📥 Скачать открытку</button>
+        <button onclick="location.reload()" style="background:#95a5a6">Создать новую</button>
     </div>
 </div>
 
 <script>
-    let textFinal = "", imgFinalUrl = "";
+    let finalText = "", finalImg = "";
 
-    function toStep(n) {
-        document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-        document.getElementById("s" + n).classList.add("active");
+    function showStep(n) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('s' + n).classList.add('active');
     }
 
-    async function genText() {
+    async function generateText() {
         const n = document.getElementById("name").value, o = document.getElementById("occasion").value;
-        if (!n || !o) return alert("Заполните поля");
-        document.getElementById("spin1").style.display = "block";
+        if (!n || !o) return alert("Заполните поля!");
+        document.getElementById("loader1").style.display = "block";
         try {
-            const r = await fetch(`https://text.pollinations.ai/${encodeURIComponent("Напиши короткое поздравление для " + n + " с " + o + ". 2 предложения.")}`);
-            textFinal = await r.text();
-            document.getElementById("textRes").textContent = textFinal;
+            const r = await fetch(`https://text.pollinations.ai/${encodeURIComponent("Напиши очень короткое душевное поздравление (1-2 предложения) для " + n + " с " + o + ". Без лишних слов.")}`);
+            finalText = await r.text();
+            document.getElementById("textRes").innerText = finalText;
             document.getElementById("textRes").style.display = "block";
             document.getElementById("next1").style.display = "block";
-        } finally { document.getElementById("spin1").style.display = "none"; }
+        } finally { document.getElementById("loader1").style.display = "none"; }
     }
 
-    async function genImg() {
-        const p = document.getElementById("imgPrompt").value || "celebration";
-        document.getElementById("spin2").style.display = "block";
-        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p + ", high quality, no text")}?width=800&height=1200&nologo=true&seed=${Math.random()}`;
-        const testImg = new Image();
-        testImg.crossOrigin = "anonymous";
-        testImg.onload = () => {
-            imgFinalUrl = url;
+    async function generateImage() {
+        const p = document.getElementById("imgPrompt").value || "holiday background";
+        document.getElementById("loader2").style.display = "block";
+        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p + ", artistic greeting card, no text, high resolution")}?width=800&height=1200&seed=${Math.random()}&nologo=true`;
+        
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+            finalImg = url;
             document.getElementById("imgPrev").src = url;
             document.getElementById("imgPrev").style.display = "block";
-            document.getElementById("spin2").style.display = "none";
+            document.getElementById("loader2").style.display = "none";
             document.getElementById("next2").style.display = "block";
         };
-        testImg.src = url;
+        img.src = url;
     }
 
-    function renderFinal() {
-        toStep(3);
-        const loader = document.getElementById("spin3");
+    async function renderFinal() {
+        showStep(3);
+        const loader = document.getElementById("loader3");
         loader.style.display = "block";
+
+        // Ждем загрузки шрифта Caveat перед рисованием
+        await document.fonts.load("bold 60px 'Caveat'");
 
         const canvas = document.getElementById("finalCard");
         const ctx = canvas.getContext("2d");
@@ -106,45 +112,61 @@
         img.onload = () => {
             canvas.width = 800;
             canvas.height = 1200;
+            
+            // 1. Фон
             ctx.drawImage(img, 0, 0, 800, 1200);
 
-            // Мягкое затемнение
-            const g = ctx.createLinearGradient(0, 700, 0, 1200);
+            // 2. Затемнение низа
+            const g = ctx.createLinearGradient(0, 800, 0, 1200);
             g.addColorStop(0, "rgba(0,0,0,0)");
-            g.addColorStop(1, "rgba(0,0,0,0.6)");
+            g.addColorStop(1, "rgba(0,0,0,0.7)");
             ctx.fillStyle = g;
-            ctx.fillRect(0, 700, 800, 500);
+            ctx.fillRect(0, 800, 800, 400);
 
-            // Текст
+            // 3. Текст
             ctx.fillStyle = "white";
             ctx.textAlign = "center";
-            ctx.shadowColor = "black";
-            ctx.shadowBlur = 10;
-            ctx.font = "60px 'Caveat', cursive";
+            ctx.shadowColor = "rgba(0,0,0,0.8)";
+            ctx.shadowBlur = 15;
+            ctx.font = "bold 65px 'Caveat', cursive";
             
-            const words = textFinal.split(" "), maxWidth = 600;
-            let line = "", y = 1000;
-            for(let n=0; n<words.length; n++) {
-                let test = line + words[n] + " ";
-                if(ctx.measureText(test).width > maxWidth) {
-                    ctx.fillText(line, 400, y);
+            const words = finalText.split(" ");
+            const maxWidth = 700; // Ограничиваем ширину текста
+            const x = 400;
+            let y = 1000;
+            let line = "";
+
+            for(let n = 0; n < words.length; n++) {
+                let testLine = line + words[n] + " ";
+                let metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && n > 0) {
+                    ctx.fillText(line, x, y);
                     line = words[n] + " ";
-                    y += 70;
-                } else { line = test; }
+                    y += 80;
+                } else {
+                    line = testLine;
+                }
             }
-            ctx.fillText(line, 400, y);
-            
+            ctx.fillText(line, x, y);
+
+            // 4. Тонкая рамка
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = "rgba(255,255,255,0.3)";
+            ctx.lineWidth = 5;
+            ctx.strokeRect(20, 20, 760, 1160);
+
             canvas.style.display = "block";
             loader.style.display = "none";
         };
-        img.src = imgFinalUrl;
+        img.src = finalImg;
     }
 
     function download() {
-        const link = document.createElement('a');
-        link.download = 'card.png';
-        link.href = document.getElementById("finalCard").toDataURL();
-        link.click();
+        const c = document.getElementById("finalCard");
+        const l = document.createElement('a');
+        l.download = 'greeting-card.png';
+        l.href = c.toDataURL("image/png");
+        l.click();
     }
 </script>
 </body>
