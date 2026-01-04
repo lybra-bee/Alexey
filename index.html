@@ -3,209 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Открытка</title>
+    <title>🎉 AI Открытка</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
-        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .step { display: none; }
-        .step.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        h1 { font-size: 24px; margin-bottom: 20px; text-align: center; color: #4b6cb7; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0 20px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; }
-        button { width: 100%; padding: 15px; background: #4b6cb7; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #3b5998; }
-        button:disabled { background: #ccc; }
-        .result-box { background: #f9f9f9; padding: 15px; border-radius: 10px; border-left: 5px solid #4b6cb7; margin-bottom: 20px; white-space: pre-wrap; display: none; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #4b6cb7; border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; display: none; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        #preview-img { width: 100%; border-radius: 10px; margin-top: 15px; display: none; border: 1px solid #ddd; }
-        canvas { width: 100%; border-radius: 10px; margin-top: 15px; display: none; }
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:Segoe UI,-apple-system,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;display:flex;align-items:center;justify-content:center}
+        .app{background:#fff;border-radius:20px;padding:30px;max-width:500px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,.2)}
+        .step{display:none}
+        .step.active{display:block;animation:slideIn .3s}
+        @keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        h1{font-size:24px;margin-bottom:20px;text-align:center;color:#333}
+        input,textarea{width:100%;padding:14px;margin:10px 0 20px;border:2px solid #e1e5e9;border-radius:12px;font-size:16px;box-sizing:border-box}
+        input:focus,textarea:focus{outline:none;border-color:#667eea}
+        button{width:100%;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:12px;font-size:16px;font-weight:500;cursor:pointer;transition:.2s;margin:5px 0}
+        button:hover:not(:disabled){transform:translateY(-1px)}
+        button:disabled{opacity:.6;cursor:not-allowed;transform:none}
+        .result{padding:16px;background:#f8f9fa;border-radius:12px;border-left:4px solid #667eea;margin:15px 0;white-space:pre-wrap;display:none}
+        .spinner{width:36px;height:36px;border:3px solid #f3f3f3;border-top:3px solid #667eea;border-radius:50%;animation:spin 1s linear infinite;margin:20px auto;display:none}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .preview{max-width:100%;height:auto;border-radius:12px;margin:15px 0 10px;display:none;box-shadow:0 8px 25px rgba(0,0,0,.15)}
+        canvas.preview{display:block;width:100%;height:auto;border-radius:12px;margin:15px 0 10px;box-shadow:0 8px 25px rgba(0,0,0,.15)}
+        .back{background:#6c757d}
+        .success{background:#28a745}
+        .status{font-size:14px;color:#666;text-align:center;margin:10px 0}
     </style>
 </head>
 <body>
-
-<div class="container">
-    <!-- Шаг 1 -->
-    <div id="step1" class="step active">
-        <h1>🎉 Текст поздравления</h1>
-        <input type="text" id="name" placeholder="Кому (напр. Саша)">
-        <input type="text" id="occasion" placeholder="Повод (напр. Свадьба)">
-        <div id="loader1" class="spinner"></div>
-        <div id="text-result" class="result-box"></div>
-        <button id="btn1" onclick="generateText()">Сгенерировать текст</button>
-        <button id="next1" onclick="changeStep(2)" style="margin-top:10px; background:#28a745; display:none;">Перейти к картинке</button>
+<div class="app">
+    <!-- Шаг 1: Текст -->
+    <div class="step active" id="s1">
+        <h1>📝 Поздравление</h1>
+        <input id="name" placeholder="Кому (Маша)">
+        <input id="occasion" placeholder="Повод (Новый год)">
+        <div id="spin1" class="spinner"></div>
+        <div id="textRes" class="result"></div>
+        <button onclick="genText()">🤖 Сгенерировать текст</button>
+        <button class="success" onclick="toStep(2)" id="next1" style="display:none">✅ К картинке</button>
     </div>
 
-    <!-- Шаг 2 -->
-    <div id="step2" class="step">
-        <h1>🖼️ Картинка</h1>
-        <textarea id="img-prompt" placeholder="Что нарисовать? (напр. кот в космосе, цветы, салют)"></textarea>
-        <div id="loader2" class="spinner"></div>
-        <img id="preview-img">
-        <button id="btn2" onclick="generateImage()">Создать изображение</button>
-        <button id="next2" onclick="renderFinal()" style="margin-top:10px; background:#28a745; display:none;">Собрать открытку</button>
-        <button onclick="changeStep(1)" style="margin-top:10px; background:#6c757d;">Назад</button>
+    <!-- Шаг 2: Изображение -->
+    <div class="step" id="s2">
+        <h1>🖼️ Открытка</h1>
+        <textarea id="imgPrompt" rows="3" placeholder="Что нарисовать? (кот с шариками, цветы, салют...)"></textarea>
+        <div id="status2" class="status"></div>
+        <div id="spin2" class="spinner"></div>
+        <img id="imgPrev" class="preview">
+        <button onclick="genImg()">🎨 Создать картинку</button>
+        <button class="success" onclick="renderCard()" id="next2" style="display:none">✨ Собрать открытку</button>
+        <button class="back" onclick="toStep(1)">← Назад</button>
     </div>
 
-    <!-- Шаг 3 -->
-    <div id="step3" class="step">
-        <h1>🎁 Ваша открытка</h1>
-        <canvas id="finalCanvas"></canvas>
-        <button onclick="downloadCard()" style="margin-top:20px; background:#007bff;">Скачать PNG</button>
-        <button onclick="location.reload()" style="margin-top:10px; background:#6c757d;">Создать новую</button>
+    <!-- Шаг 3: Результат -->
+    <div class="step" id="s3">
+        <h1>🎁 Готово!</h1>
+        <canvas id="finalCard" class="preview"></canvas>
+        <button onclick="download()">📥 Скачать</button>
+        <button class="back" onclick="toStep(2)">🔄 Переделать</button>
     </div>
 </div>
 
 <script>
-    let finalText = "";
-    let finalImgUrl = "";
+let textFinal="",imgFinal="";
 
-    function changeStep(n) {
-        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-        document.getElementById('step' + n).classList.add('active');
+function toStep(n){
+    document.querySelectorAll(".step").forEach((s,i)=>s.id=="s"+n?s.classList.add("active"):s.classList.remove("active"))
+}
+
+async function genText(){
+    const name=document.getElementById("name").value.trim(),occasion=document.getElementById("occasion").value.trim();
+    if(!name||!occasion)return alert("Заполните поля");
+    
+    const btn=document.getElementById("next1"),spin=document.getElementById("spin1"),res=document.getElementById("textRes");
+    btn.style.display="none";spin.style.display="block";res.style.display="none";
+    
+    try{
+        const p=`Поздравление для ${name} с ${occasion}. 2-3 предложения, душевно, на русском.`;
+        const r=await fetch(`https://text.pollinations.ai/${encodeURIComponent(p)}`);
+        textFinal=(await r.text()).trim();
+        res.textContent=textFinal;
+        res.style.display="block";
+        btn.style.display="block"
+    }catch(e){
+        alert("Ошибка сети. Проверьте соединение.")
+    }finally{
+        spin.style.display="none"
     }
+}
 
-    // --- Текст через Pollinations (Chat) ---
-    async function generateText() {
-        const name = document.getElementById('name').value;
-        const occasion = document.getElementById('occasion').value;
-        if (!name || !occasion) return alert("Заполните поля!");
+async function genImg(){
+    const prompt=document.getElementById("imgPrompt").value.trim()||"праздничная открытка";
+    const btn=document.getElementById("next2"),spin=document.getElementById("spin2"),status=document.getElementById("status2"),img=document.getElementById("imgPrev");
+    
+    btn.style.display="none";spin.style.display="block";status.textContent="Генерирую...";img.style.display="none";
+    
+    const seed=Math.floor(Math.random()*1e6);
+    // Pollinations Image API [web:75]
+    imgFinal=`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt+", greeting card style, high quality, no text")}?width=512&height=768&seed=${seed}&nologo=true`;
+    
+    img.onload=()=>{
+        spin.style.display="none";
+        status.textContent="Готово!";
+        img.style.display="block";
+        btn.style.display="block";
+    };
+    img.onerror=()=>{
+        spin.style.display="none";
+        status.textContent="Ошибка. Попробуйте другой запрос.";
+    };
+    img.src=imgFinal;
+}
 
-        const btn = document.getElementById('btn1');
-        const loader = document.getElementById('loader1');
-        const resBox = document.getElementById('text-result');
-
-        btn.disabled = true;
-        loader.style.display = "block";
-        resBox.style.display = "none";
-
-        const prompt = `Напиши короткое доброе поздравление для ${name} с ${occasion}. 2-3 предложения. На русском языке. Без лишних вступлений.`;
+function renderCard(){
+    toStep(3);
+    const canvas=document.getElementById("finalCard"),ctx=canvas.getContext("2d"),img=new Image();
+    img.crossOrigin="anonymous";
+    
+    img.onload=()=>{
+        canvas.width=512;canvas.height=768;canvas.style.display="block";
         
-        try {
-            // Используем Pollinations Text API (бесплатно, без ключей) [web:49]
-            const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-            finalText = await response.text();
-            resBox.textContent = finalText;
-            resBox.style.display = "block";
-            document.getElementById('next1').style.display = "block";
-        } catch (e) {
-            alert("Ошибка сети. Попробуйте еще раз.");
-        } finally {
-            btn.disabled = false;
-            loader.style.display = "none";
-        }
-    }
-
-    // --- Картинка через Pollinations (Image) ---
-    async function generateImage() {
-        const userPrompt = document.getElementById('img-prompt').value || "celebration background";
-        const btn = document.getElementById('btn2');
-        const loader = document.getElementById('loader2');
-        const preview = document.getElementById('preview-img');
-
-        btn.disabled = true;
-        loader.style.display = "block";
-        preview.style.display = "none";
-
-        // Pollinations Image API генерирует картинку по URL (без ожидания в очереди) [web:75]
-        const seed = Math.floor(Math.random() * 1000000);
-        const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(userPrompt + ", high quality, greeting card style, no text")}?width=512&height=768&seed=${seed}&nologo=true`;
-
-        // Предзагрузка изображения для проверки работоспособности
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        img.onload = () => {
-            finalImgUrl = imageUrl;
-            preview.src = imageUrl;
-            preview.style.display = "block";
-            loader.style.display = "none";
-            btn.disabled = false;
-            document.getElementById('next2').style.display = "block";
-        };
-        img.onerror = () => {
-            alert("Ошибка генерации. Попробуйте другой запрос.");
-            loader.style.display = "none";
-            btn.disabled = false;
-        };
-        img.src = imageUrl;
-    }
-
-    // --- Сборка в Canvas ---
-    function renderFinal() {
-        changeStep(3);
-        const canvas = document.getElementById('finalCanvas');
-        const ctx = canvas.getContext('2d');
-        const img = new Image();
-        img.crossOrigin = "anonymous"; 
+        // Фон
+        ctx.drawImage(img,0,0,512,768);
         
-        img.onload = () => {
-            canvas.width = 512;
-            canvas.height = 768;
-            canvas.style.display = "block";
-            
-            // 1. Рисуем фон
-            ctx.drawImage(img, 0, 0, 512, 768);
-            
-            // 2. Декоративная плашка под текст
-            ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-            ctx.roundRect(30, 520, 452, 210, 15);
-            ctx.fill();
-            
-            // 3. Золотая рамка
-            ctx.strokeStyle = "#D4AF37";
-            ctx.lineWidth = 12;
-            ctx.strokeRect(15, 15, 482, 738);
-            
-            // 4. Текст
-            ctx.fillStyle = "white";
-            ctx.font = "bold 26px 'Segoe UI', Arial";
-            ctx.textAlign = "center";
-            wrapText(ctx, finalText, 256, 570, 400, 35);
-        };
-        img.src = finalImgUrl;
-    }
-
-    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-        let words = text.split(' ');
-        let line = '';
-        for(let n = 0; n < words.length; n++) {
-            let testLine = line + words[n] + ' ';
-            if (ctx.measureText(testLine).width > maxWidth && n > 0) {
-                ctx.fillText(line, x, y);
-                line = words[n] + ' ';
-                y += lineHeight;
-            } else {
-                line = testLine;
-            }
+        // Подложка
+        ctx.fillStyle="rgba(0,0,0,0.7)";
+        ctx.fillRect(35,530,442,190);
+        
+        // Рамка
+        ctx.strokeStyle="#ffd700";ctx.lineWidth=10;
+        ctx.strokeRect(20,20,472,728);
+        
+        // Текст
+        ctx.fillStyle="#fff";
+        ctx.font="bold 24px Segoe UI,Arial";
+        ctx.textAlign="center";
+        let words=textFinal.split(" "),line="",y=575;
+        for(let i=0;i<words.length;i++){
+            let test=line+words[i]+" ";
+            if(ctx.measureText(test).width>400&&i>0){
+                ctx.fillText(line.trim(),256,y);
+                line=words[i]+" ";y+=32
+            }else line=test
         }
-        ctx.fillText(line, x, y);
-    }
+        ctx.fillText(line.trim(),256,y)
+    };
+    img.src=imgFinal
+}
 
-    function downloadCard() {
-        const canvas = document.getElementById('finalCanvas');
-        const link = document.createElement('a');
-        link.download = 'greeting-card.png';
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-    }
-
-    // Полифилл для старых браузеров (roundRect)
-    if (!CanvasRenderingContext2D.prototype.roundRect) {
-        CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
-            if (w < 2 * r) r = w / 2;
-            if (h < 2 * r) r = h / 2;
-            this.beginPath();
-            this.moveTo(x + r, y);
-            this.arcTo(x + w, y, x + w, y + h, r);
-            this.arcTo(x + w, y + h, x, y + h, r);
-            this.arcTo(x, y + h, x, y, r);
-            this.arcTo(x, y, x + w, y, r);
-            this.closePath();
-            return this;
-        };
-    }
+function download(){
+    const canvas=document.getElementById("finalCard"),a=document.createElement("a");
+    a.download="ai-otkrytka.png";
+    a.href=canvas.toDataURL("image/png");
+    a.click()
+}
 </script>
-
 </body>
 </html>
